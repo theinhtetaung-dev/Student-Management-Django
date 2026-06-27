@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management Hub</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234f46e5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 10v6M2 10l10-5 10 5-10 5z'/%3E%3Cpath d='M6 12v5c3 3 9 3 12 0v-5'/%3E%3C/svg%3E">
+    <!-- Google Fonts - Inter & Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            /* Light Theme Variables */
+            --bg-primary: #f8fafc;
+            --bg-card: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --accent-primary: #4f46e5;
+            --accent-secondary: #6366f1;
+            --accent-hover: #4338ca;
+            --success: #10b981;
+            --danger: #ef4444;
+            --border-color: #e2e8f0;
+            --table-header-bg: #f1f5f9;
+            --table-hover: #f8fafc;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body.dark-theme {
+            /* Dark Theme Variables */
+            --bg-primary: #0b0f19;
+            --bg-card: #131c31;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-primary: #6366f1;
+            --accent-secondary: #818cf8;
+            --accent-hover: #4f46e5;
+            --success: #34d399;
+            --danger: #f87171;
+            --border-color: #1e293b;
+            --table-header-bg: #1e293b;
+            --table-hover: #1e293b70;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: var(--transition);
+            min-height: 100vh;
+            padding: 2rem 1.5rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* Header Section */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem 2rem;
+            background-color: var(--bg-card);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            padding: 0.6rem;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+        }
+
+        .logo-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .theme-toggle-btn {
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.6rem;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .theme-toggle-btn:hover {
+            background-color: var(--table-header-bg);
+            transform: rotate(15deg);
+        }
+
+        /* Stats Cards Section */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .stat-card {
+            background-color: var(--bg-card);
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-info h3 {
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-info p {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .stat-icon {
+            padding: 0.75rem;
+            border-radius: var(--radius-md);
+            background-color: var(--table-header-bg);
+            color: var(--accent-primary);
+        }
+
+        /* Main Workspace Section */
+        .workspace {
+            background-color: var(--bg-card);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* Control Panel */
+        .control-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            position: relative;
+            flex-grow: 1;
+            max-width: 400px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.75rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.95rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .search-box input:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+
+        .search-box i, .search-box svg {
+            position: absolute;
+            left: 0.95rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            width: 18px;
+            height: 18px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            border-radius: var(--radius-md);
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: var(--transition);
+            outline: none;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(99, 102, 241, 0.35);
+        }
+
+        .btn-secondary {
+            background-color: var(--table-header-bg);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--border-color);
+        }
+
+        .btn-danger-ghost {
+            background: none;
+            color: var(--danger);
+            border: 1px solid transparent;
+            padding: 0.4rem;
+            border-radius: var(--radius-sm);
+        }
+
+        .btn-danger-ghost:hover {
+            background-color: rgba(239, 68, 68, 0.1);
+        }
+
+        .btn-primary-ghost {
+            background: none;
+            color: var(--accent-primary);
+            border: 1px solid transparent;
+            padding: 0.4rem;
+            border-radius: var(--radius-sm);
+        }
+
+        .btn-primary-ghost:hover {
+            background-color: rgba(99, 102, 241, 0.1);
+        }
+
+        /* Table Section */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        th {
+            background-color: var(--table-header-bg);
+            color: var(--text-secondary);
+            font-weight: 600;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        td {
+            padding: 1.1rem 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+            transition: var(--transition);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background-color: var(--table-hover);
+        }
+
+        .badge {
+            display: inline-flex;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 9999px;
+            background-color: rgba(99, 102, 241, 0.1);
+            color: var(--accent-primary);
+        }
+
+        .actions-cell {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* Empty State */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 2rem;
+            text-align: center;
+            color: var(--text-secondary);
+            gap: 1rem;
+        }
+
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            color: var(--border-color);
+            stroke-width: 1.5;
+        }
+
+        .empty-state h4 {
+            color: var(--text-primary);
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        /* Pagination Section */
+        .pagination-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 0.5rem;
+        }
+
+        .pagination-info {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .pagination-controls {
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .page-btn {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .page-btn:hover:not(:disabled) {
+            background-color: var(--table-header-bg);
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+        }
+
+        .page-btn.active {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            border-color: transparent;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* Modal Overlay & Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(11, 15, 25, 0.5);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-card {
+            background-color: var(--bg-card);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-color);
+            width: 90%;
+            max-width: 480px;
+            transform: translateY(20px);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            overflow: hidden;
+        }
+
+        .modal-overlay.active .modal-card {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            padding: 0.25rem;
+            transition: var(--transition);
+        }
+
+        .close-btn:hover {
+            background-color: var(--table-header-bg);
+            color: var(--text-primary);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: inherit;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+
+        .modal-footer {
+            padding: 1.25rem 1.5rem;
+            border-top: 1px solid var(--border-color);
+            background-color: var(--table-header-bg);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            z-index: 2000;
+        }
+
+        .toast {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background-color: var(--bg-card);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            border-left: 4px solid var(--accent-primary);
+            padding: 1rem 1.5rem;
+            color: var(--text-primary);
+            transform: translateX(120%);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            max-width: 320px;
+        }
+
+        .toast.active {
+            transform: translateX(0);
+        }
+
+        .toast-success {
+            border-left-color: var(--success);
+        }
+
+        .toast-error {
+            border-left-color: var(--danger);
+        }
+
+        .toast-text {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* Responsive Design tweaks */
+        @media (max-width: 640px) {
+            body {
+                padding: 1rem 0.5rem;
+            }
+            .workspace {
+                padding: 1.25rem;
+            }
+            .control-panel {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .search-box {
+                max-width: 100%;
+            }
+            .btn {
+                justify-content: center;
+            }
+            .pagination-container {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    {% csrf_token %}
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="logo-section">
+                <div class="logo-icon">
+                    <i data-lucide="graduation-cap"></i>
+                </div>
+                <h1 class="logo-title">Student Hub</h1>
+            </div>
+            <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle Theme">
+                <i data-lucide="moon" id="themeIcon"></i>
+            </button>
+        </header>
+
+        <!-- Stats Section -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-info">
+                    <h3>Total Students</h3>
+                    <p id="totalStudentsStat">0</p>
+                </div>
+                <div class="stat-icon">
+                    <i data-lucide="users"></i>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-info">
+                    <h3>Active Majors</h3>
+                    <p id="totalMajorsStat">0</p>
+                </div>
+                <div class="stat-icon">
+                    <i data-lucide="book-open"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Workspace -->
+        <div class="workspace">
+            <div class="control-panel">
+                <div class="search-box">
+                    <i data-lucide="search"></i>
+                    <input type="text" id="searchInput" placeholder="Search by name, roll no, or major...">
+                </div>
+                <button class="btn btn-primary" id="openAddModalBtn">
+                    <i data-lucide="plus"></i> Add New Student
+                </button>
+            </div>
+
+            <!-- Table Container -->
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Roll Number</th>
+                            <th>Full Name</th>
+                            <th>Major</th>
+                            <th style="width: 120px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentTableBody">
+                        <!-- Table records will load dynamically -->
+                    </tbody>
+                </table>
+                <div class="empty-state" id="emptyState" style="display: none;">
+                    <i data-lucide="inbox"></i>
+                    <h4>No Students Found</h4>
+                    <p>Try refining your search or add a new student record.</p>
+                </div>
+            </div>
+
+            <!-- Pagination Section -->
+            <div class="pagination-container" id="paginationContainer">
+                <div class="pagination-info" id="paginationInfo">
+                    Showing 0 to 0 of 0 entries
+                </div>
+                <div class="pagination-controls" id="paginationControls">
+                    <!-- Pagination buttons load dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Student Modal -->
+    <div class="modal-overlay" id="studentModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add Student</h3>
+                <button class="close-btn" id="closeModalBtn">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <form id="studentForm">
+                <div class="modal-body">
+                    <input type="hidden" id="studentIdInput">
+                    <div class="form-group">
+                        <label for="rollNoInput">Roll Number</label>
+                        <input type="text" id="rollNoInput" placeholder="e.g. CS-042" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="nameInput">Full Name</label>
+                        <input type="text" id="nameInput" placeholder="e.g. John Doe" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="majorInput">Major</label>
+                        <input type="text" id="majorInput" placeholder="e.g. Computer Science" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancelModalBtn">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="saveStudentBtn">Save Details</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Confirm Delete Modal -->
+    <div class="modal-overlay" id="deleteConfirmModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Confirm Deletion</h3>
+                <button class="close-btn" id="closeDeleteModalBtn">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to permanently delete student <strong id="deleteStudentName"></strong>? This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelDeleteBtn">Cancel</button>
+                <button type="button" class="btn btn-primary" id="confirmDeleteBtn" style="background: var(--danger); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);">Delete Record</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // State Management
+        let currentPage = 1;
+        const pageLimit = 5;
+        let searchQuery = '';
+        let selectedStudentIdToDelete = null;
+
+        // Element Selectors
+        const studentTableBody = document.getElementById('studentTableBody');
+        const emptyState = document.getElementById('emptyState');
+        const searchInput = document.getElementById('searchInput');
+        const openAddModalBtn = document.getElementById('openAddModalBtn');
+        const studentModal = document.getElementById('studentModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const cancelModalBtn = document.getElementById('cancelModalBtn');
+        const studentForm = document.getElementById('studentForm');
+        const modalTitle = document.getElementById('modalTitle');
+        
+        // Input Selectors
+        const studentIdInput = document.getElementById('studentIdInput');
+        const rollNoInput = document.getElementById('rollNoInput');
+        const nameInput = document.getElementById('nameInput');
+        const majorInput = document.getElementById('majorInput');
+
+        // Delete Modal Selectors
+        const deleteConfirmModal = document.getElementById('deleteConfirmModal');
+        const deleteStudentName = document.getElementById('deleteStudentName');
+        const closeDeleteModalBtn = document.getElementById('closeDeleteModalBtn');
+        const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+
+        // Stats selectors
+        const totalStudentsStat = document.getElementById('totalStudentsStat');
+        const totalMajorsStat = document.getElementById('totalMajorsStat');
+
+        // Pagination selectors
+        const paginationInfo = document.getElementById('paginationInfo');
+        const paginationControls = document.getElementById('paginationControls');
+
+        // Theme management
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        const themeIcon = document.getElementById('themeIcon');
+
+        // CSRF Token Helper
+        function getCsrfToken() {
+            return document.querySelector('[name=csrfmiddlewaretoken]').value;
+        }
+
+        // Init Lucide
+        function updateIcons() {
+            lucide.createIcons();
+        }
+
+        // Initialize Theme on load
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.body.classList.add('dark-theme');
+                themeIcon.setAttribute('data-lucide', 'sun');
+            } else {
+                document.body.classList.remove('dark-theme');
+                themeIcon.setAttribute('data-lucide', 'moon');
+            }
+            updateIcons();
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            const isDark = document.body.classList.toggle('dark-theme');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            themeIcon.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+            updateIcons();
+        });
+
+        // Toast Notification System
+        function showToast(message, type = 'success') {
+            const toastContainer = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            
+            const iconName = type === 'success' ? 'check-circle' : 'alert-circle';
+            toast.innerHTML = `
+                <i data-lucide="${iconName}" style="color: var(--${type === 'success' ? 'success' : 'danger'})"></i>
+                <span class="toast-text">${message}</span>
+            `;
+            
+            toastContainer.appendChild(toast);
+            lucide.createIcons();
+
+            // Trigger animation
+            setTimeout(() => toast.classList.add('active'), 10);
+
+            // Remove toast after 3 seconds
+            setTimeout(() => {
+                toast.classList.remove('active');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Load & Render Students List
+        async function fetchStudents() {
+            try {
+                const response = await fetch(`/api/students/?q=${encodeURIComponent(searchQuery)}&page=${currentPage}&limit=${pageLimit}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    renderTable(result.data.items);
+                    renderPagination(result.data);
+                    renderStats(result.stats);
+                } else {
+                    showToast('Failed to load students', 'error');
+                }
+            } catch (err) {
+                console.error(err);
+                showToast('Network error loading students', 'error');
+            }
+        }
+
+        // Render Table Rows
+        function renderTable(students) {
+            studentTableBody.innerHTML = '';
+            if (students.length === 0) {
+                emptyState.style.display = 'flex';
+                return;
+            }
+            emptyState.style.display = 'none';
+
+            students.forEach(student => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${escapeHTML(student.roll_no)}</strong></td>
+                    <td>${escapeHTML(student.name)}</td>
+                    <td><span class="badge">${escapeHTML(student.major)}</span></td>
+                    <td>
+                        <div class="actions-cell">
+                            <button class="btn-primary-ghost" onclick="editStudent(${student.student_id})" title="Edit Student">
+                                <i data-lucide="edit-3" style="width: 18px; height: 18px;"></i>
+                            </button>
+                            <button class="btn-danger-ghost" onclick="confirmDelete(${student.student_id}, '${escapeHTML(student.name.replace(/'/g, "\\'"))}')" title="Delete Student">
+                                <i data-lucide="trash-2" style="width: 18px; height: 18px;"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                studentTableBody.appendChild(tr);
+            });
+            updateIcons();
+        }
+
+        // Render Stats
+        function renderStats(stats) {
+            totalStudentsStat.textContent = stats.total_students;
+            totalMajorsStat.textContent = stats.unique_majors;
+        }
+
+        // Render Pagination Controls
+        function renderPagination(data) {
+            const { page, limit, total_count, total_pages } = data;
+            
+            // Info text
+            const start = total_count === 0 ? 0 : (page - 1) * limit + 1;
+            const end = Math.min(page * limit, total_count);
+            paginationInfo.textContent = `Showing ${start} to ${end} of ${total_count} entries`;
+
+            // Controls
+            paginationControls.innerHTML = '';
+            
+            // Previous button
+            const prevBtn = document.createElement('button');
+            prevBtn.className = 'page-btn';
+            prevBtn.innerHTML = '<i data-lucide="chevron-left" style="width: 16px; height: 16px;"></i>';
+            prevBtn.disabled = page === 1;
+            prevBtn.addEventListener('click', () => {
+                currentPage = page - 1;
+                fetchStudents();
+            });
+            paginationControls.appendChild(prevBtn);
+
+            // Page numbers
+            for (let i = 1; i <= total_pages; i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.className = `page-btn ${i === page ? 'active' : ''}`;
+                pageBtn.textContent = i;
+                pageBtn.addEventListener('click', () => {
+                    currentPage = i;
+                    fetchStudents();
+                });
+                paginationControls.appendChild(pageBtn);
+            }
+
+            // Next button
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'page-btn';
+            nextBtn.innerHTML = '<i data-lucide="chevron-right" style="width: 16px; height: 16px;"></i>';
+            nextBtn.disabled = page === total_pages || total_pages === 0;
+            nextBtn.addEventListener('click', () => {
+                currentPage = page + 1;
+                fetchStudents();
+            });
+            paginationControls.appendChild(nextBtn);
+            
+            updateIcons();
+        }
+
+        // Search Input Handling with Debounce
+        let searchTimeout;
+        searchInput.addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                searchQuery = e.target.value;
+                currentPage = 1;
+                fetchStudents();
+            }, 300);
+        });
+
+        // Add Modal Trigger
+        openAddModalBtn.addEventListener('click', () => {
+            studentForm.reset();
+            studentIdInput.value = '';
+            modalTitle.textContent = 'Add Student';
+            studentModal.classList.add('active');
+        });
+
+        // Close Modal Triggers
+        function closeModal() {
+            studentModal.classList.remove('active');
+        }
+
+        closeModalBtn.addEventListener('click', closeModal);
+        cancelModalBtn.addEventListener('click', closeModal);
+        studentModal.addEventListener('click', (e) => {
+            if (e.target === studentModal) closeModal();
+        });
+
+        // Save Student (Submit Form)
+        studentForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const studentId = studentIdInput.value;
+            const payload = {
+                roll_no: rollNoInput.value,
+                name: nameInput.value,
+                major: majorInput.value
+            };
+
+            const url = studentId ? `/api/students/${studentId}/` : '/api/students/';
+            const method = 'POST'; // We handle updates via POST (Django treats requests with studentId as update)
+
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCsrfToken()
+                    },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    showToast(result.message || 'Student details saved successfully!');
+                    closeModal();
+                    fetchStudents();
+                } else {
+                    showToast(result.error || 'Failed to save student details.', 'error');
+                }
+            } catch (err) {
+                console.error(err);
+                showToast('An error occurred while saving student.', 'error');
+            }
+        });
+
+        // Edit Student Fetch Details
+        async function editStudent(studentId) {
+            try {
+                const response = await fetch(`/api/students/${studentId}/`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    studentIdInput.value = result.student.student_id;
+                    rollNoInput.value = result.student.roll_no;
+                    nameInput.value = result.student.name;
+                    majorInput.value = result.student.major;
+                    modalTitle.textContent = 'Edit Student';
+                    studentModal.classList.add('active');
+                } else {
+                    showToast(result.error || 'Failed to load student details.', 'error');
+                }
+            } catch (err) {
+                console.error(err);
+                showToast('Network error loading student details.', 'error');
+            }
+        }
+
+        // Delete Confirm Logic
+        function confirmDelete(studentId, name) {
+            selectedStudentIdToDelete = studentId;
+            deleteStudentName.textContent = name;
+            deleteConfirmModal.classList.add('active');
+        }
+
+        function closeDeleteModal() {
+            deleteConfirmModal.classList.remove('active');
+            selectedStudentIdToDelete = null;
+        }
+
+        closeDeleteModalBtn.addEventListener('click', closeDeleteModal);
+        cancelDeleteBtn.addEventListener('click', closeDeleteModal);
+        deleteConfirmModal.addEventListener('click', (e) => {
+            if (e.target === deleteConfirmModal) closeDeleteModal();
+        });
+
+        confirmDeleteBtn.addEventListener('click', async () => {
+            if (!selectedStudentIdToDelete) return;
+            
+            try {
+                const response = await fetch(`/api/students/${selectedStudentIdToDelete}/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRFToken': getCsrfToken()
+                    }
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    showToast(result.message || 'Student deleted successfully.');
+                    closeDeleteModal();
+                    // If we delete the last item on the current page, go back a page
+                    if (studentTableBody.children.length === 1 && currentPage > 1) {
+                        currentPage--;
+                    }
+                    fetchStudents();
+                } else {
+                    showToast(result.error || 'Failed to delete student.', 'error');
+                }
+            } catch (err) {
+                console.error(err);
+                showToast('Network error during deletion.', 'error');
+            }
+        });
+
+        // Helper to escape HTML to prevent XSS
+        function escapeHTML(str) {
+            return str
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        // Main Init
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            fetchStudents();
+        });
+    </script>
+</body>
+</html>

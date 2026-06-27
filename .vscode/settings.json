@@ -1,0 +1,12 @@
+{
+    "python.defaultInterpreterPath": "C:\\Users\\DELL\\.virtualenvs\\Student-Management-Django--1xm9id0\\Scripts\\python.exe",
+    "python.terminal.activateEnvironment": true,
+    "python.languageServer": "Pylance",
+    "python.analysis.extraPaths": [
+        "C:\\Users\\DELL\\.virtualenvs\\Student-Management-Django--1xm9id0\\Lib\\site-packages"
+    ],
+    "python.analysis.venvPath": "C:\\Users\\DELL\\.virtualenvs",
+    "python.analysis.venv": "Student-Management-Django--1xm9id0",
+    "python.analysis.useLibraryCodeForTypes": true,
+    "python.analysis.autoImportCompletions": true
+}
