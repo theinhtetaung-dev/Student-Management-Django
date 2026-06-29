@@ -340,6 +340,18 @@
             color: #ef4444;
         }
 
+        /* Major Badge */
+        .major-badge {
+            display: inline-flex;
+            padding: 0.25rem 0.65rem;
+            font-size: 0.78rem;
+            font-weight: 600;
+            border-radius: 9999px;
+            background-color: rgba(116, 104, 255, 0.12);
+            color: var(--primary-color);
+            letter-spacing: 0.02em;
+        }
+
         /* Footer / Pagination */
         .footer-info {
             color: var(--text-muted);
@@ -539,7 +551,7 @@
                             
                             <td class="fw-medium">{{ student.roll_no or 'N/A' }}</td>
                             <td class="fw-bold">{{ student.studentName }}</td>
-                            <td class="fw-medium">{{ student.major }}</td>
+                            <td class="fw-medium"><span class="major-badge">{{ student.major }}</span></td>
                             <td class="text-end">
                                 <button class="action-btn" onclick="openEditModal('{{ student.id }}', '{{ student.roll_no }}', '{{ student.studentName }}', '{{ student.major }}')">
                                     <i data-lucide="edit-2" style="width: 18px; height: 18px;"></i>
@@ -701,17 +713,25 @@
         }
 
         function fillSampleData() {
-            const samples = [
-                {roll: 'CSE-24-001', name: 'Alice Smith', major: 'CSE'},
-                {roll: 'CSE-24-012', name: 'Bob Johnson', major: 'CSE'},
-                {roll: 'ECE-24-045', name: 'Carol Williams', major: 'ECE'},
-                {roll: 'ECE-23-108', name: 'David Lee', major: 'ECE'},
-                {roll: 'CSE-24-099', name: 'Eva Martinez', major: 'CSE'}
-            ];
-            const pick = samples[Math.floor(Math.random() * samples.length)];
-            document.getElementById('roll_no').value = pick.roll;
-            document.getElementById('studentName').value = pick.name;
-            document.getElementById('major').value = pick.major;
+            const first  = ['Kyaw','Thein','Hlaing','Myo','Aung','Zaw','Win','Min','Thet','Htet','Phyo','Naing','Soe','Ye','Yan','Bo','Ko','Nay'];
+            const middle = ['Htet','Myo','Zin','Lin','Thu','Kyaw','Naing','Win','Min','Aung','Phyo','Zaw','Lwin','Ko','Htoo'];
+            const last   = ['Aung','Oo','Lin','Thu','Naing','Win','Kyaw','Moe','Htet','Phyo','Tun','Htun'];
+            const pick   = arr => arr[Math.floor(Math.random() * arr.length)];
+
+            let f = pick(first), m = pick(middle), l = pick(last);
+            while (m === f) m = pick(middle);
+            while (l === f || l === m) l = pick(last);
+            const name = `${f} ${m} ${l}`;
+
+            const year   = 2021 + Math.floor(Math.random() * 5);      // 2021–2025
+            const majors = ['cse', 'ece'];
+            const major  = pick(majors);
+            const num    = String(Math.floor(Math.random() * 60) + 1).padStart(3, '0'); // 001–060
+            const rollNo = `${year}-miit-${major}-${num}`;
+
+            document.getElementById('roll_no').value      = rollNo;
+            document.getElementById('studentName').value  = name;
+            document.getElementById('major').value        = major.toUpperCase(); // 'CSE' or 'ECE'
         }
 
         // --- Client-Side Search and Pagination ---
@@ -873,15 +893,46 @@
             }
         }
 
+        // Validate that major in roll number matches selected major
+        // Expected format: 2024-miit-cse-037  →  parts[2] = 'cse'
+        function validateMajorRollNo(rollNoId, majorId, modalId) {
+            const rollNo = document.getElementById(rollNoId).value.trim().toLowerCase();
+            const major  = document.getElementById(majorId).value.toLowerCase();
+            const parts  = rollNo.split('-');
+            if (parts.length < 3) return true; // not MIIT format, skip
+            const rollMajor = parts[2];
+            if (rollMajor !== major) {
+                showModalError(modalId, `Major mismatch! Roll number contains "<strong>${rollMajor.toUpperCase()}</strong>" but Major is set to "<strong>${major.toUpperCase()}</strong>".`);
+                return false;
+            }
+            return true;
+        }
+
+        function showModalError(modalId, html) {
+            const modal = document.getElementById(modalId);
+            let banner = modal.querySelector('.major-error-banner');
+            if (!banner) {
+                banner = document.createElement('div');
+                banner.className = 'major-error-banner';
+                banner.style.cssText = 'margin:0 1.5rem 0.75rem;padding:0.65rem 1rem;border-radius:10px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#ef4444;font-size:0.875rem;font-weight:500;';
+                modal.querySelector('.modal-body').prepend(banner);
+            }
+            banner.innerHTML = html;
+            banner.style.display = 'block';
+            setTimeout(() => { banner.style.display = 'none'; }, 4000);
+        }
+
         // Hook up Add form
         document.getElementById('addStudentForm').addEventListener('submit', function(e) {
             e.preventDefault();
+            if (!validateMajorRollNo('roll_no', 'major', 'addStudentModal')) return;
             handleAjaxSubmit(this, 'addStudentModal', 'Saving');
         });
 
         // Hook up Edit form
         document.getElementById('editStudentForm').addEventListener('submit', function(e) {
             e.preventDefault();
+            if (!validateMajorRollNo('edit_roll_no', 'edit_major', 'editStudentModal')) return;
             handleAjaxSubmit(this, 'editStudentModal', 'Updating');
         });
 

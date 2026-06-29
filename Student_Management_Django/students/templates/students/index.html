@@ -488,6 +488,27 @@
             font-weight: 600;
         }
 
+        .btn-sample {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.35rem 0.85rem;
+            border-radius: 9999px;
+            border: 1px solid var(--border-color);
+            background-color: var(--table-header-bg);
+            color: var(--text-secondary);
+            font-family: inherit;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-sample:hover {
+            background-color: var(--border-color);
+            color: var(--text-primary);
+        }
+
         .close-btn {
             background: none;
             border: none;
@@ -638,7 +659,8 @@
                 <h1 class="logo-title">Student Hub</h1>
             </div>
             <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle Theme">
-                <i data-lucide="moon" id="themeIcon"></i>
+                <span id="icon-sun" style="display:none;"><i data-lucide="sun"></i></span>
+                <span id="icon-moon" style="display:none;"><i data-lucide="moon"></i></span>
             </button>
         </header>
 
@@ -681,6 +703,7 @@
                 <table>
                     <thead>
                         <tr>
+                            <th style="width: 60px;">No.</th>
                             <th>Roll Number</th>
                             <th>Full Name</th>
                             <th>Major</th>
@@ -715,9 +738,14 @@
         <div class="modal-card">
             <div class="modal-header">
                 <h3 id="modalTitle">Add Student</h3>
-                <button class="close-btn" id="closeModalBtn">
-                    <i data-lucide="x"></i>
-                </button>
+                <div style="display:flex; align-items:center; gap:0.5rem;">
+                    <button type="button" class="btn-sample" id="sampleDataBtn" onclick="fillSampleData()">
+                        <i data-lucide="wand-2" style="width:14px;height:14px;"></i> Sample
+                    </button>
+                    <button class="close-btn" id="closeModalBtn">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
             </div>
             <form id="studentForm">
                 <div class="modal-body">
@@ -810,7 +838,6 @@
 
         // Theme management
         const themeToggleBtn = document.getElementById('themeToggleBtn');
-        const themeIcon = document.getElementById('themeIcon');
 
         // CSRF Token Helper
         function getCsrfToken() {
@@ -822,23 +849,29 @@
             lucide.createIcons();
         }
 
+        // Show sun in light mode, moon in dark mode
+        function updateThemeIcon(isDark) {
+            document.getElementById('icon-sun').style.display = isDark ? 'none' : 'block';
+            document.getElementById('icon-moon').style.display = isDark ? 'block' : 'none';
+        }
+
         // Initialize Theme on load
         function initTheme() {
             const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            const isDark = savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            if (isDark) {
                 document.body.classList.add('dark-theme');
-                themeIcon.setAttribute('data-lucide', 'sun');
             } else {
                 document.body.classList.remove('dark-theme');
-                themeIcon.setAttribute('data-lucide', 'moon');
             }
+            updateThemeIcon(isDark);
             updateIcons();
         }
 
         themeToggleBtn.addEventListener('click', () => {
             const isDark = document.body.classList.toggle('dark-theme');
             localStorage.setItem('theme', isDark ? 'dark' : 'light');
-            themeIcon.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+            updateThemeIcon(isDark);
             updateIcons();
         });
 
@@ -895,9 +928,11 @@
             }
             emptyState.style.display = 'none';
 
-            students.forEach(student => {
+            students.forEach((student, index) => {
                 const tr = document.createElement('tr');
+                const serialNo = (currentPage - 1) * pageLimit + index + 1;
                 tr.innerHTML = `
+                    <td style="color: var(--accent-primary); font-weight: 700;">${serialNo}</td>
                     <td><strong>${escapeHTML(student.roll_no)}</strong></td>
                     <td>${escapeHTML(student.name)}</td>
                     <td><span class="badge">${escapeHTML(student.major)}</span></td>
@@ -988,8 +1023,34 @@
             studentForm.reset();
             studentIdInput.value = '';
             modalTitle.textContent = 'Add Student';
+            // Show sample button only on Add, hide on Edit
+            document.getElementById('sampleDataBtn').style.display = 'inline-flex';
             studentModal.classList.add('active');
         });
+
+        // Fill Sample Data - Myanmar names & MIIT roll format
+        function fillSampleData() {
+            const first  = ['Kyaw','Thein','Hlaing','Myo','Aung','Zaw','Win','Min','Thet','Htet','Phyo','Naing','Soe','Ye','Yan','Bo','Ko','Nay'];
+            const middle = ['Htet','Myo','Zin','Lin','Thu','Kyaw','Naing','Win','Min','Aung','Phyo','Zaw','Lwin','Ko','Htoo'];
+            const last   = ['Aung','Oo','Lin','Thu','Naing','Win','Kyaw','Moe','Htet','Phyo','Tun','Htun'];
+            const pick   = arr => arr[Math.floor(Math.random() * arr.length)];
+
+            let f = pick(first), m = pick(middle), l = pick(last);
+            while (m === f) m = pick(middle);
+            while (l === f || l === m) l = pick(last);
+            const name = `${f} ${m} ${l}`;
+
+            const year   = 2021 + Math.floor(Math.random() * 5);      // 2021–2025
+            const majors = ['cse', 'ece'];
+            const major  = pick(majors);
+            const num    = String(Math.floor(Math.random() * 60) + 1).padStart(3, '0'); // 001–060
+            const rollNo = `${year}-miit-${major}-${num}`;
+
+            document.getElementById('rollNoInput').value = rollNo;
+            document.getElementById('nameInput').value   = name;
+            document.getElementById('majorInput').value  = major.toUpperCase(); // 'CSE' or 'ECE'
+            updateIcons();
+        }
 
         // Close Modal Triggers
         function closeModal() {
@@ -1002,15 +1063,33 @@
             if (e.target === studentModal) closeModal();
         });
 
+        // Validate that major in roll number matches selected major
+        // Expected format: 2024-miit-cse-037  →  parts[2] = 'cse'
+        function validateMajorRollNo(rollNo, major) {
+            const parts = rollNo.trim().toLowerCase().split('-');
+            if (parts.length < 3) return true; // not MIIT format, skip check
+            const rollMajor = parts[2]; // 'cse' or 'ece'
+            return rollMajor === major.toLowerCase();
+        }
+
         // Save Student (Submit Form)
         studentForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const studentId = studentIdInput.value;
+            const rollNo    = rollNoInput.value;
+            const major     = majorInput.value;
+
+            if (!validateMajorRollNo(rollNo, major)) {
+                showToast(`Major mismatch! Roll number contains a different major than "${major}".`, 'error');
+                rollNoInput.focus();
+                return;
+            }
+
             const payload = {
-                roll_no: rollNoInput.value,
+                roll_no: rollNo,
                 name: nameInput.value,
-                major: majorInput.value
+                major: major
             };
 
             const url = studentId ? `/api/students/${studentId}/` : '/api/students/';
@@ -1052,6 +1131,8 @@
                     nameInput.value = result.student.name;
                     majorInput.value = result.student.major; // sets select option matching 'CSE' or 'ECE'
                     modalTitle.textContent = 'Edit Student';
+                    // Hide sample button in edit mode
+                    document.getElementById('sampleDataBtn').style.display = 'none';
                     studentModal.classList.add('active');
                 } else {
                     showToast(result.error || 'Failed to load student details.', 'error');
