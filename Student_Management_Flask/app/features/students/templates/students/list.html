@@ -398,14 +398,16 @@
             border-top: 1px solid var(--border-color);
         }
 
-        .form-control {
+        .form-control,
+        .form-select {
             background-color: var(--input-bg);
             border: 1px solid var(--border-color);
             color: var(--text-main);
             border-radius: 10px;
         }
         
-        .form-control:focus {
+        .form-control:focus,
+        .form-select:focus {
             background-color: var(--input-bg);
             color: var(--text-main);
             border-color: var(--primary-color);
@@ -605,7 +607,11 @@
                         </div>
                         <div class="mb-3">
                             <label for="major" class="form-label">Major</label>
-                            <input type="text" class="form-control" id="major" name="major" required placeholder="e.g. Computer Science">
+                            <select class="form-select" id="major" name="major" required>
+                                <option value="" disabled selected>Select a Major</option>
+                                <option value="CSE">CSE</option>
+                                <option value="ECE">ECE</option>
+                            </select>
                         </div>
                     </div>
                     <div class="modal-footer border-top-0 pt-0 px-4 pb-4">
@@ -637,7 +643,11 @@
                         </div>
                         <div class="mb-3">
                             <label for="edit_major" class="form-label">Major</label>
-                            <input type="text" class="form-control" id="edit_major" name="major" required>
+                            <select class="form-select" id="edit_major" name="major" required>
+                                <option value="" disabled>Select a Major</option>
+                                <option value="CSE">CSE</option>
+                                <option value="ECE">ECE</option>
+                            </select>
                         </div>
                     </div>
                     <div class="modal-footer border-top-0 pt-0 px-4 pb-4">
@@ -681,7 +691,7 @@
         function openEditModal(id, rollNo, name, major) {
             document.getElementById('edit_roll_no').value = rollNo;
             document.getElementById('edit_studentName').value = name;
-            document.getElementById('edit_major').value = major;
+            document.getElementById('edit_major').value = major; // sets select option matching 'CSE' or 'ECE'
             
             let basePath = window.location.pathname;
             if (basePath.endsWith('/')) basePath = basePath.slice(0, -1);
@@ -692,11 +702,11 @@
 
         function fillSampleData() {
             const samples = [
-                {roll: 'CS-24-001', name: 'Alice Smith', major: 'Computer Science'},
-                {roll: 'ME-24-012', name: 'Bob Johnson', major: 'Mechanical Engineering'},
-                {roll: 'BBA-24-045', name: 'Carol Williams', major: 'Business Administration'},
-                {roll: 'EE-23-108', name: 'David Lee', major: 'Electrical Engineering'},
-                {roll: 'BIO-24-099', name: 'Eva Martinez', major: 'Biology'}
+                {roll: 'CSE-24-001', name: 'Alice Smith', major: 'CSE'},
+                {roll: 'CSE-24-012', name: 'Bob Johnson', major: 'CSE'},
+                {roll: 'ECE-24-045', name: 'Carol Williams', major: 'ECE'},
+                {roll: 'ECE-23-108', name: 'David Lee', major: 'ECE'},
+                {roll: 'CSE-24-099', name: 'Eva Martinez', major: 'CSE'}
             ];
             const pick = samples[Math.floor(Math.random() * samples.length)];
             document.getElementById('roll_no').value = pick.roll;
