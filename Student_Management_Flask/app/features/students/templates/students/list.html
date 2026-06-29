@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Hub</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --surface-color: #ffffff;
+            --surface-header: #f1f5f9;
+            --primary-color: #6366f1;
+            --primary-hover: #4f46e5;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --input-bg: #f8fafc;
+            --icon-bg: #f1f5f9;
+            --hover-bg: #f1f5f9;
+            --card-border: rgba(0, 0, 0, 0.05);
+            --modal-overlay: rgba(255, 255, 255, 0.5);
+            --delete-hover-bg: #fee2e2;
+            --close-btn-filter: invert(0);
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #101623;
+            --surface-color: #192132;
+            --surface-header: #232c3f;
+            --primary-color: #7468ff;
+            --primary-hover: #6154e6;
+            --text-main: #ffffff;
+            --text-muted: #a0aec0; /* Brightened for better visibility */
+            --border-color: #283347;
+            --input-bg: #0b1019;
+            --icon-bg: #232c3f;
+            --hover-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.05);
+            --modal-overlay: rgba(0, 0, 0, 0.6);
+            --delete-hover-bg: rgba(239, 68, 68, 0.1);
+            --close-btn-filter: invert(1) grayscale(100%) brightness(200%);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .brand-text {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        /* Header */
+        .header-container {
+            padding: 1.5rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo-box {
+            background: var(--primary-color);
+            border-radius: 10px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 4px 12px rgba(116, 104, 255, 0.3);
+        }
+
+        .theme-toggle {
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            border-radius: 12px;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .theme-toggle:hover {
+            background: var(--border-color);
+        }
+
+        /* Cards */
+        .custom-card {
+            background-color: var(--surface-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        /* Stats */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .stat-title {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+        
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            line-height: 1;
+            margin: 0;
+            font-family: 'Outfit', sans-serif;
+            color: var(--text-main);
+        }
+        
+        .stat-icon-wrapper {
+            background: var(--icon-bg);
+            border-radius: 12px;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+        }
+
+        /* Search & Controls */
+        .control-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        @media (max-width: 576px) {
+            .control-panel {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .search-container form {
+                flex-direction: column;
+                width: 100%;
+            }
+            .search-input-wrapper {
+                width: 100%;
+            }
+            .search-input {
+                width: 100% !important;
+            }
+            .btn-search-action {
+                width: 100%;
+                margin-left: 0 !important;
+                margin-top: 0.5rem;
+                padding: 0.75rem !important;
+            }
+        }
+
+        .search-container {
+            flex-grow: 1;
+            max-width: 500px;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+        }
+
+        .search-input {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 0.6rem 2.5rem 0.6rem 1rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(116, 104, 255, 0.15);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .btn-clear {
+            position: absolute;
+            right: 8px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            z-index: 10;
+        }
+
+        .btn-clear:hover {
+            background: var(--border-color);
+            color: var(--text-main);
+        }
+
+        .btn-search-action {
+            background: var(--surface-header);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            border-radius: 8px;
+            padding: 0 1.2rem;
+            margin-left: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        .btn-search-action:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .btn-add {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.25rem;
+            border-radius: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        
+        .btn-add:hover {
+            background-color: var(--primary-hover);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        /* Table */
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+        
+        .custom-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            color: var(--text-main);
+        }
+        
+        .custom-table th {
+            background-color: var(--surface-header);
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            padding: 1rem 1.5rem;
+            text-align: left;
+            border-bottom: none;
+        }
+        
+        .custom-table th:first-child { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
+        .custom-table th:last-child { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
+
+        .custom-table td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+            font-size: 0.95rem;
+        }
+
+        .custom-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .custom-table tbody tr {
+            transition: background-color 0.2s ease;
+        }
+        
+        .custom-table tbody tr:hover {
+            background-color: var(--hover-bg);
+        }
+
+        .action-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.4rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+        
+        .action-btn:hover {
+            background: var(--icon-bg);
+            color: var(--text-main);
+        }
+        
+        .action-btn.delete:hover {
+            background: var(--delete-hover-bg);
+            color: #ef4444;
+        }
+
+        /* Footer / Pagination */
+        .footer-info {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-top: 1.5rem;
+        }
+
+        .custom-page-link {
+            background-color: var(--surface-header);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            border-radius: 8px !important;
+            margin: 0 0.2rem;
+            transition: all 0.2s ease;
+        }
+        
+        .custom-page-link:hover {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .page-item.active .custom-page-link {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+        
+        .page-item.disabled .custom-page-link {
+            background-color: transparent;
+            color: var(--text-muted);
+            border-color: transparent;
+            pointer-events: none;
+        }
+
+        /* Modals */
+        .modal-backdrop.show {
+            backdrop-filter: blur(8px);
+            background-color: var(--modal-overlay);
+            opacity: 1;
+        }
+
+        .modal-content {
+            background-color: var(--surface-color);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .modal-header {
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .modal-footer {
+            border-top: 1px solid var(--border-color);
+        }
+
+        .form-control {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            border-radius: 10px;
+        }
+        
+        .form-control:focus {
+            background-color: var(--input-bg);
+            color: var(--text-main);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(116, 104, 255, 0.25);
+        }
+        
+        .form-label {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .btn-close {
+            filter: var(--close-btn-filter);
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid max-w-7xl mx-auto px-4 py-3" style="max-width: 1200px;">
+        <!-- Header -->
+        <header class="header-container mb-2">
+            <div class="d-flex align-items-center gap-3">
+                <div class="logo-box">
+                    <i data-lucide="graduation-cap"></i>
+                </div>
+                <h4 class="brand-text mb-0 fs-4">Student Hub</h4>
+            </div>
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle Theme">
+                <span id="icon-light" style="display:none;"><i data-lucide="sun"></i></span>
+                <span id="icon-dark" style="display:none;"><i data-lucide="moon"></i></span>
+            </button>
+        </header>
+
+        <!-- Flash Messages (Toast format) -->
+        <div id="flash-messages-container" class="position-fixed top-0 end-0 p-4" style="z-index: 1055;">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="d-flex flex-column gap-2">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show shadow-lg mb-0" role="alert" style="border-radius: 12px; border: 1px solid var(--border-color); background-color: var(--surface-color); animation: slideInRight 0.3s ease-out forwards; min-width: 300px; padding: 1rem 1.25rem;">
+                            <div class="d-flex align-items-center">
+                                {% if category == 'success' %}
+                                    <i data-lucide="check-circle" class="me-3" style="color: #10b981; width: 24px; height: 24px;"></i>
+                                {% elif category == 'danger' %}
+                                    <i data-lucide="alert-circle" class="me-3" style="color: #ef4444; width: 24px; height: 24px;"></i>
+                                {% else %}
+                                    <i data-lucide="info" class="me-3" style="width: 24px; height: 24px;"></i>
+                                {% endif %}
+                                <div style="color: var(--text-main); font-weight: 500; font-size: 0.95rem;">
+                                    {{ message }}
+                                </div>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" style="top: 50%; transform: translateY(-50%); padding: 1rem;"></button>
+                        </div>
+                    {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <!-- Stat Cards -->
+        <div class="stat-grid">
+            <div class="custom-card d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="stat-title">Total Students</div>
+                    <div class="stat-value">{{ total_active_students }}</div>
+                </div>
+                <div class="stat-icon-wrapper">
+                    <i data-lucide="users"></i>
+                </div>
+            </div>
+            
+            <div class="custom-card d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="stat-title">Active Majors</div>
+                    <div class="stat-value">{{ active_majors }}</div>
+                </div>
+                <div class="stat-icon-wrapper">
+                    <i data-lucide="book-open"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="custom-card">
+            <!-- Controls -->
+            <div class="control-panel">
+                <div class="search-container">
+                    <form id="searchForm" class="d-flex position-relative">
+                        <div class="search-input-wrapper">
+                            <input type="text" id="searchInput" class="search-input" placeholder="Search by name, roll no, or major...">
+                            <button type="button" id="clearBtn" class="btn-clear" onclick="clearSearch()" aria-label="Clear Search" title="Clear Search" style="display:none;">
+                                <i data-lucide="x" style="width: 14px; height: 14px;"></i>
+                            </button>
+                        </div>
+                        <button type="submit" class="btn-search-action" aria-label="Search">
+                            Search
+                        </button>
+                    </form>
+                </div>
+
+                <button class="btn-add" data-bs-toggle="modal" data-bs-target="#addStudentModal">
+                    <i data-lucide="plus" style="width: 18px; height: 18px;"></i>
+                    Add New Student
+                </button>
+            </div>
+
+            <!-- Table -->
+            <div class="table-container">
+                <table class="custom-table" id="studentsTable">
+                    <thead>
+                        <tr>
+                            <th width="60">No.</th>
+                            <th>Roll Number</th>
+                            <th>Full Name</th>
+                            <th>Major</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in students %}
+                        <tr class="student-row">
+                            <td class="serial-no fw-bold" style="color: var(--primary-color);"></td>
+                            
+                            <td class="fw-medium">{{ student.roll_no or 'N/A' }}</td>
+                            <td class="fw-bold">{{ student.studentName }}</td>
+                            <td class="fw-medium">{{ student.major }}</td>
+                            <td class="text-end">
+                                <button class="action-btn" onclick="openEditModal('{{ student.id }}', '{{ student.roll_no }}', '{{ student.studentName }}', '{{ student.major }}')">
+                                    <i data-lucide="edit-2" style="width: 18px; height: 18px;"></i>
+                                </button>
+                                <form action="{{ url_for('students.delete_student', student_id=student.id) }}" method="POST" class="d-inline delete-form">
+                                    <button type="button" class="action-btn delete" onclick="confirmDelete(this.form)">
+                                        <i data-lucide="trash-2" style="width: 18px; height: 18px;"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        
+                        <!-- Empty State Row -->
+                        <tr id="emptyStateRow" style="display: none;">
+                            <td colspan="5" class="p-4 border-bottom-0">
+                                <div class="alert alert-warning d-flex align-items-center justify-content-center mb-0 shadow-sm" role="alert" style="border-radius: 12px; border: 1px solid rgba(245, 158, 11, 0.2); background-color: rgba(245, 158, 11, 0.1); color: #b45309;">
+                                    <i data-lucide="alert-circle" class="me-2" style="width: 20px; height: 20px;"></i>
+                                    <span class="fw-medium">Student have not</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Footer & Pagination -->
+            <div class="d-flex justify-content-between align-items-center flex-wrap">
+                <div class="footer-info" id="footerInfo">
+                    Showing 0 to 0 of 0 entries
+                </div>
+                
+                <nav class="mt-3" id="paginationNav" style="display: none;">
+                    <ul class="pagination mb-0" id="paginationUl">
+                        <!-- JS injects pagination here -->
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Add Modal -->
+    <div class="modal fade" id="addStudentModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-bottom-0 pb-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                    <h5 class="modal-title brand-text" style="color: var(--text-main);">Add New Student</h5>
+                    <div class="d-flex align-items-center">
+                        <button type="button" class="btn btn-sm btn-outline-secondary me-3 rounded-pill" onclick="fillSampleData()" title="Auto-fill sample data">
+                            <i data-lucide="wand-2" style="width: 14px; height: 14px;" class="me-1"></i>Sample
+                        </button>
+                        <button type="button" class="btn-close m-0" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                </div>
+                <form action="{{ url_for('students.add_student') }}" method="POST" id="addStudentForm">
+                    <div class="modal-body p-4">
+                        <div class="mb-3">
+                            <label for="roll_no" class="form-label">Roll Number</label>
+                            <input type="text" class="form-control" id="roll_no" name="roll_no" required placeholder="e.g. CS-24-001">
+                        </div>
+                        <div class="mb-3">
+                            <label for="studentName" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="studentName" name="studentName" required placeholder="e.g. John Doe">
+                        </div>
+                        <div class="mb-3">
+                            <label for="major" class="form-label">Major</label>
+                            <input type="text" class="form-control" id="major" name="major" required placeholder="e.g. Computer Science">
+                        </div>
+                    </div>
+                    <div class="modal-footer border-top-0 pt-0 px-4 pb-4">
+                        <button type="button" class="btn btn-secondary rounded-3" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn-add">Save Student</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editStudentModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-bottom-0 pb-0 pt-4 px-4">
+                    <h5 class="modal-title brand-text" style="color: var(--text-main);">Edit Student</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="editStudentForm" method="POST">
+                    <div class="modal-body p-4">
+                        <div class="mb-3">
+                            <label for="edit_roll_no" class="form-label">Roll Number</label>
+                            <input type="text" class="form-control" id="edit_roll_no" name="roll_no" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_studentName" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="edit_studentName" name="studentName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_major" class="form-label">Major</label>
+                            <input type="text" class="form-control" id="edit_major" name="major" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-top-0 pt-0 px-4 pb-4">
+                        <button type="button" class="btn btn-secondary rounded-3" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn-add">Update Student</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap & Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        lucide.createIcons();
+
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        updateIconVisibility(savedTheme);
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateIconVisibility(newTheme);
+        });
+
+        function updateIconVisibility(theme) {
+            if (theme === 'dark') {
+                document.getElementById('icon-light').style.display = 'block';
+                document.getElementById('icon-dark').style.display = 'none';
+            } else {
+                document.getElementById('icon-light').style.display = 'none';
+                document.getElementById('icon-dark').style.display = 'block';
+            }
+        }
+        
+        function openEditModal(id, rollNo, name, major) {
+            document.getElementById('edit_roll_no').value = rollNo;
+            document.getElementById('edit_studentName').value = name;
+            document.getElementById('edit_major').value = major;
+            
+            let basePath = window.location.pathname;
+            if (basePath.endsWith('/')) basePath = basePath.slice(0, -1);
+            document.getElementById('editStudentForm').action = `${basePath}/edit/${id}`;
+            
+            new bootstrap.Modal(document.getElementById('editStudentModal')).show();
+        }
+
+        function fillSampleData() {
+            const samples = [
+                {roll: 'CS-24-001', name: 'Alice Smith', major: 'Computer Science'},
+                {roll: 'ME-24-012', name: 'Bob Johnson', major: 'Mechanical Engineering'},
+                {roll: 'BBA-24-045', name: 'Carol Williams', major: 'Business Administration'},
+                {roll: 'EE-23-108', name: 'David Lee', major: 'Electrical Engineering'},
+                {roll: 'BIO-24-099', name: 'Eva Martinez', major: 'Biology'}
+            ];
+            const pick = samples[Math.floor(Math.random() * samples.length)];
+            document.getElementById('roll_no').value = pick.roll;
+            document.getElementById('studentName').value = pick.name;
+            document.getElementById('major').value = pick.major;
+        }
+
+        // --- Client-Side Search and Pagination ---
+        const rowsPerPage = 5;
+        let currentPage = 1;
+        let allRows = [];
+        let filteredRows = [];
+
+        document.addEventListener("DOMContentLoaded", () => {
+            initTableRows();
+            
+            // Clear button visibility logic
+            const searchInput = document.getElementById("searchInput");
+            const clearBtn = document.getElementById("clearBtn");
+            
+            searchInput.addEventListener("input", function() {
+                clearBtn.style.display = this.value.trim() ? 'flex' : 'none';
+            });
+
+            // Prevent form submit & handle search
+            document.getElementById("searchForm").addEventListener("submit", (e) => {
+                e.preventDefault();
+                performSearch();
+            });
+
+            renderTable();
+        });
+
+        function initTableRows() {
+            allRows = Array.from(document.querySelectorAll("#studentsTable tbody tr.student-row"));
+            filteredRows = [...allRows];
+        }
+
+        function performSearch() {
+            const query = document.getElementById("searchInput").value.toLowerCase().trim();
+            
+            filteredRows = allRows.filter(row => {
+                const text = row.innerText.toLowerCase();
+                return text.includes(query);
+            });
+            
+            currentPage = 1;
+            renderTable();
+        }
+
+        function clearSearch() {
+            const searchInput = document.getElementById("searchInput");
+            searchInput.value = "";
+            document.getElementById("clearBtn").style.display = 'none';
+            performSearch();
+        }
+
+        function renderTable() {
+            // Hide all rows initially
+            allRows.forEach(row => row.style.display = 'none');
+            
+            // Re-assign serial numbers based on filtered subset
+            filteredRows.forEach((row, index) => {
+                row.querySelector('.serial-no').innerText = index + 1;
+            });
+
+            const totalPages = Math.ceil(filteredRows.length / rowsPerPage) || 1;
+            if (currentPage > totalPages) currentPage = totalPages;
+            if (currentPage < 1) currentPage = 1;
+
+            const start = (currentPage - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+
+            // Display active subset
+            for (let i = start; i < end && i < filteredRows.length; i++) {
+                filteredRows[i].style.display = '';
+            }
+
+            // Handle empty state row
+            const emptyRow = document.getElementById('emptyStateRow');
+            if (filteredRows.length === 0) {
+                if(emptyRow) emptyRow.style.display = '';
+            } else {
+                if(emptyRow) emptyRow.style.display = 'none';
+            }
+
+            updatePaginationUI(totalPages);
+            
+            // Update info text
+            const info = document.getElementById('footerInfo');
+            const showingStart = filteredRows.length === 0 ? 0 : start + 1;
+            const showingEnd = Math.min(end, filteredRows.length);
+            info.innerText = `Showing ${showingStart} to ${showingEnd} of ${filteredRows.length} entries`;
+        }
+
+        function updatePaginationUI(totalPages) {
+            const nav = document.getElementById("paginationNav");
+            const ul = document.getElementById("paginationUl");
+            
+            if (totalPages <= 1) {
+                nav.style.display = 'none';
+                return;
+            }
+            
+            nav.style.display = 'block';
+            ul.innerHTML = '';
+            
+            ul.innerHTML += `
+                <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                    <a class="page-link custom-page-link" href="#" onclick="changePage(${currentPage - 1}); return false;" aria-label="Previous">
+                        &laquo;
+                    </a>
+                </li>
+            `;
+            
+            for (let p = 1; p <= totalPages; p++) {
+                ul.innerHTML += `
+                    <li class="page-item ${p === currentPage ? 'active' : ''}">
+                        <a class="page-link custom-page-link" href="#" onclick="changePage(${p}); return false;">${p}</a>
+                    </li>
+                `;
+            }
+            
+            ul.innerHTML += `
+                <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                    <a class="page-link custom-page-link" href="#" onclick="changePage(${currentPage + 1}); return false;" aria-label="Next">
+                        &raquo;
+                    </a>
+                </li>
+            `;
+        }
+
+        window.changePage = function(page) {
+            currentPage = page;
+            renderTable();
+        }
+
+        // --- AJAX Form Submission (No Page Reload) ---
+        async function handleAjaxSubmit(form, modalId, loadingText) {
+            const btn = form.querySelector('button[type="submit"]');
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>${loadingText}...`;
+            btn.disabled = true;
+
+            try {
+                // Submit data to server
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: new FormData(form)
+                });
+
+                if (response.ok) {
+                    if (modalId) {
+                        bootstrap.Modal.getInstance(document.getElementById(modalId)).hide();
+                        form.reset();
+                    }
+                    await refreshDOMFromServer(response);
+                }
+            } catch (err) {
+                console.error("AJAX Error:", err);
+            } finally {
+                btn.innerHTML = originalHtml;
+                btn.disabled = false;
+            }
+        }
+
+        // Hook up Add form
+        document.getElementById('addStudentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            handleAjaxSubmit(this, 'addStudentModal', 'Saving');
+        });
+
+        // Hook up Edit form
+        document.getElementById('editStudentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            handleAjaxSubmit(this, 'editStudentModal', 'Updating');
+        });
+
+        // Hook up Delete inline forms
+        window.confirmDelete = async function(form) {
+            if (confirm('Delete this student?')) {
+                const btn = form.querySelector('button');
+                const originalHtml = btn.innerHTML;
+                btn.innerHTML = `<span class="spinner-border spinner-border-sm" style="width: 14px; height: 14px;"></span>`;
+                btn.disabled = true;
+                
+                try {
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        body: new FormData(form)
+                    });
+                    if (response.ok) {
+                        await refreshDOMFromServer(response);
+                    }
+                } catch (err) {
+                    console.error("Delete Error:", err);
+                    btn.innerHTML = originalHtml;
+                    btn.disabled = false;
+                }
+            }
+        };
+
+        // Fetches updated HTML and replaces table and stat blocks smoothly
+        async function refreshDOMFromServer(response) {
+            const html = await response.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            
+            // Replace flash messages
+            const oldFlash = document.querySelector('#flash-messages-container');
+            const newFlash = doc.querySelector('#flash-messages-container');
+            if (oldFlash && newFlash) {
+                oldFlash.innerHTML = newFlash.innerHTML;
+            }
+
+            // Replace table body
+            const oldTbody = document.querySelector('#studentsTable tbody');
+            const newTbody = doc.querySelector('#studentsTable tbody');
+            if (oldTbody && newTbody) {
+                oldTbody.innerHTML = newTbody.innerHTML;
+            }
+            
+            // Replace stat grid
+            const oldStats = document.querySelector('.stat-grid');
+            const newStats = doc.querySelector('.stat-grid');
+            if (oldStats && newStats) {
+                oldStats.innerHTML = newStats.innerHTML;
+            }
+            
+            // Reinitialize icons in newly injected HTML
+            lucide.createIcons();
+            
+            // Reinitialize client-side array and re-render current state
+            initTableRows();
+            performSearch();
+        }
+    </script>
+</body>
+</html>
